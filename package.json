@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./index.js | pino-pretty"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +14,11 @@
     "cheerio": "^1.0.0-rc.3",
     "dgraph-js": "^2.1.0",
     "grpc": "^1.24.2",
+    "js-logger": "^1.6.0",
+    "pino": "^5.17.0",
     "queue": "^6.0.1"
+  },
+  "devDependencies": {
+    "pino-pretty": "^3.6.1"
   }
 }

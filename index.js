@@ -1,5 +1,8 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
+const pino = require('pino');
+
+const logger = pino({ level: process.env.LOG_LEVEL || 'info' });
 
 const recipeUrl = "https://www.marmiton.org/recettes/recette_"
 
@@ -158,8 +161,6 @@ async function insertRecipe ({title, rating, ingredients, rid}) {
         mu.setSetJson(p);
         const res = await txn.mutate(mu);
         await txn.commit();
-    } catch {
-        console.log("erreur :(")
     } finally {
         await txn.discard();
     }
@@ -176,24 +177,35 @@ async function queueIfNotInDb(data) {
 async function fetchAndInsertIfNotInDb (recipe) {
     const recipeUid = await getRecipeUid(recipe.rid)
     if (recipeUid) {
-        console.log(`skip ${recipe.name}`)
+        logger.info(`Skip ${recipe.name} (${recipeQueue.length} remaining)`)
         if ( recipeQueue.length == 0 ) {
             const data = await parseUrl(recipe)
             await queueIfNotInDb(data)
         }
     } else {
-        console.log(`insert ${recipe.name}`)
+        logger.info(`Insert ${recipe.name} (${recipeQueue.length} remaining)`)
         const data = await parseUrl(recipe)
         await insertRecipe(data)
         await queueIfNotInDb(data)
     }
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
 const main = async () => {
+    logger.info(`Let go 🚀`)
     await initDgraphSchema()
     while (recipeQueue.length > 0){
-        await fetchAndInsertIfNotInDb(recipeQueue.pop())
+        const recipe = recipeQueue.pop()
+        try {
+            await fetchAndInsertIfNotInDb(recipe)
+        } catch {
+            logger.error(`Could not fetch ${recipe.name}. It is time to have a nap.`)
+            recipeQueue.unshift(recipe)
+            await sleep(60000)
+        }
     }
     
     // console.log(await getOrInsertIngredient("g de pavot"))
