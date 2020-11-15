@@ -13,7 +13,7 @@
 - virtualen (recommended)
 - node
 
-## Marmiton scrapper
+## Marmiton scraper
 
 ### Setup
 
@@ -36,7 +36,7 @@ docker run --rm -d -p 8000:8000 -p 8080:8080 -p 9080:9080 \
 docker exec dgraph-marmiton dgraph live -f ./export/dgraph.r1750726.u0322.2008/g01.rdf.gz -s ./export/dgraph.r1750726.u0322.2008/g01.schema.gz
 ```
 
-### Start the scrapper
+### Start the scraper
 
 ```
 npm run start
