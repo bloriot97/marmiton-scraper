@@ -9,7 +9,7 @@ const recipeUrl = "https://www.marmiton.org/recettes/recette_"
 const dgraph = require("dgraph-js");
 const grpc = require("grpc");
 
-const recipeQueue = [{name: "gateau-au-pavot-comme-en-allemagne", rid: 57587}]
+const recipeQueue = [{name: "cheesecake-sale-au-potiron", rid: 230908}]
 
 const clientStub = new dgraph.DgraphClientStub(
   // addr: optional, default: "localhost:9080"
